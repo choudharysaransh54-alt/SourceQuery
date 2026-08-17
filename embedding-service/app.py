@@ -4,7 +4,7 @@ from sentence_transformers import SentenceTransformer
 
 app = FastAPI()
 
-model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+model = SentenceTransformer("BAAI/bge-small-en-v1.5", device="cpu")
 
 
 class Request(BaseModel):
