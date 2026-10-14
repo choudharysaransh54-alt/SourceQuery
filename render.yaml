@@ -1,0 +1,40 @@
+services:
+  # 1. Embedding Microservice (Python + FastAPI)
+  - type: web
+    name: sourcequery-embedding
+    runtime: python
+    rootDir: embedding-service
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 8000
+
+  # 2. Main Backend API (Node.js + Express)
+  - type: web
+    name: sourcequery-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: GROQ_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: EMBEDDING_SERVICE
+        fromService:
+          type: web
+          name: sourcequery-embedding
+          property: host
+      - key: EMBEDDING_SERVICE_URL
+        fromService:
+          type: web
+          name: sourcequery-embedding
+          property: host
