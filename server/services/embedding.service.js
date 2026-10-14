@@ -15,7 +15,7 @@ async function generateEmbeddings(chunks) {
         );
 
         const response = await axios.post(
-            `${process.env.EMBEDDING_SERVICE}/embed`,
+            `${process.env.EMBEDDING_SERVICE_URL}/embed`,
             {
                 chunks: batch
             }

@@ -17,7 +17,7 @@ app.use("/api/search", searchRoutes);
 app.get("/", (req, res) => {
     res.json({
         success: true,
-        message: "RepoLens AI Backend Running"
+        message: "SourceQuery Backend Running"
     });
 });
 

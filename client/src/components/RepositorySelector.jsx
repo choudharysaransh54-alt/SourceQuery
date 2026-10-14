@@ -69,7 +69,7 @@ function RepositorySelector({
 
     }
 
-    if (repositories.length === 0) {
+    if (!repositories || repositories.length === 0) {
         return null;
     }
 

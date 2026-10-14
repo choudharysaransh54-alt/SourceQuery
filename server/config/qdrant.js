@@ -1,8 +1,8 @@
 const { QdrantClient } = require("@qdrant/js-client-rest");
 
 const client = new QdrantClient({
-    url: process.env.QDRANT_URL,
-    apiKey: process.env.QDRANT_API_KEY,
+    url: process.env.QDRANT_URL || "http://localhost:6333",
+    apiKey: process.env.QDRANT_API_KEY || undefined,
     checkCompatibility: false
 });
 
@@ -15,7 +15,16 @@ async function createCollection(collectionName) {
     );
 
     if (exists) {
-        await client.deleteCollection(collectionName);
+        try {
+            await client.delete(collectionName, {
+                filter: {
+                    must_not: []
+                }
+            });
+        } catch (err) {
+            console.warn("Could not clear points in existing collection:", err.message);
+        }
+        return;
     }
 
     await client.createCollection(collectionName, {
@@ -37,9 +46,17 @@ async function listCollections() {
 
 async function deleteCollection(collectionName) {
 
-    console.log("Deleting from Qdrant:", collectionName);
+    console.log("Deleting points/collection from Qdrant:", collectionName);
     
-    await client.deleteCollection(collectionName);
+    try {
+        await client.delete(collectionName, {
+            filter: {
+                must_not: []
+            }
+        });
+    } catch (err) {
+        console.warn("Could not delete points from Qdrant:", err.message);
+    }
 
 }
 
