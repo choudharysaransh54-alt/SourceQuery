@@ -43,7 +43,7 @@ exports.uploadRepository = async (req, res) => {
         }
 
         // Limit chunks for fast, reliable indexing within cloud timeout limits
-        const MAX_CHUNKS = 150;
+        const MAX_CHUNKS = 35;
         const indexChunks = chunks.slice(0, MAX_CHUNKS);
 
         const embeddings = await generateEmbeddings(indexChunks);
@@ -189,7 +189,7 @@ exports.reindexRepository = async (req, res) => {
             });
         }
 
-        const MAX_CHUNKS = 150;
+        const MAX_CHUNKS = 35;
         const indexChunks = chunks.slice(0, MAX_CHUNKS);
 
         const embeddings = await generateEmbeddings(indexChunks);
