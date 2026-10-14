@@ -45,12 +45,22 @@ function boostScore(item) {
 
 }
 
+function getEmbeddingServiceUrl() {
+    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "http://localhost:8000";
+    url = url.trim();
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = `https://${url}`;
+    }
+    return url.replace(/\/$/, "");
+}
+
 async function search(query, repoUrl) {
 
     const collectionName = getCollectionName(repoUrl);
+    const baseUrl = getEmbeddingServiceUrl();
 
     const { data } = await axios.post(
-        `${process.env.EMBEDDING_SERVICE}/embed`,
+        `${baseUrl}/embed`,
         {
             chunks: [
                 {
