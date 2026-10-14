@@ -12,7 +12,7 @@ Ask questions about any GitHub repository in natural language and receive contex
 [![NodeJS](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Qdrant](https://img.shields.io/badge/Qdrant-VectorDB-DC244C?style=for-the-badge)](https://qdrant.tech/)
 [![Groq](https://img.shields.io/badge/Groq-LLM-black?style=for-the-badge)](https://groq.com/)
-[![Railway](https://img.shields.io/badge/Railway-Deployed-0B0D0E?style=for-the-badge&logo=railway)](https://railway.app/)
+[![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-Live-000000?style=for-the-badge&logo=vercel)](https://vercel.com/)
 
 </div>
@@ -21,15 +21,21 @@ Ask questions about any GitHub repository in natural language and receive contex
 
 # Live Demo
 
-### Frontend
+### 🌐 Frontend (Web App)
 
-**https://repo-lens-ai-phi.vercel.app**
+**[https://source-query-swart.vercel.app](https://source-query-swart.vercel.app)**
 
 ---
 
-### Backend API
+### ⚙️ Backend API
 
-**https://repolens-ai-production-c998.up.railway.app**
+**[https://sourcequery-api.onrender.com](https://sourcequery-api.onrender.com)**
+
+---
+
+### 🧠 Vector Embedding Microservice
+
+**[https://sourcequery-embedding.onrender.com](https://sourcequery-embedding.onrender.com)**
 
 ---
 
