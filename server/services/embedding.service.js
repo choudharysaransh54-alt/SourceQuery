@@ -3,10 +3,22 @@ const axios = require("axios");
 const BATCH_SIZE = 40;
 
 function getEmbeddingServiceUrl() {
-    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "http://localhost:8000";
+    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "https://sourcequery-embedding.onrender.com";
     url = url.trim();
+
+    if (url === "http://localhost:8000" || url === "localhost:8000" || !url) {
+        if (process.env.NODE_ENV === "production" || process.env.RENDER) {
+            return "https://sourcequery-embedding.onrender.com";
+        }
+    }
+
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = `https://${url}`;
+        const host = url.split(":")[0];
+        if (!host.includes(".") || host === "localhost") {
+            url = url.includes(":") ? `http://${url}` : `http://${url}:8000`;
+        } else {
+            url = `https://${url}`;
+        }
     }
     return url.replace(/\/$/, "");
 }
@@ -15,6 +27,7 @@ async function generateEmbeddings(chunks) {
 
     const embeddings = [];
     const baseUrl = getEmbeddingServiceUrl();
+    console.log(`Generating embeddings for ${chunks.length} chunks using: ${baseUrl}`);
 
     for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
 
@@ -28,6 +41,9 @@ async function generateEmbeddings(chunks) {
             `${baseUrl}/embed`,
             {
                 chunks: batch
+            },
+            {
+                timeout: 120000
             }
         );
 

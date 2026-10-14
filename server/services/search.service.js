@@ -46,10 +46,22 @@ function boostScore(item) {
 }
 
 function getEmbeddingServiceUrl() {
-    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "http://localhost:8000";
+    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "https://sourcequery-embedding.onrender.com";
     url = url.trim();
+
+    if (url === "http://localhost:8000" || url === "localhost:8000" || !url) {
+        if (process.env.NODE_ENV === "production" || process.env.RENDER) {
+            return "https://sourcequery-embedding.onrender.com";
+        }
+    }
+
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = `https://${url}`;
+        const host = url.split(":")[0];
+        if (!host.includes(".") || host === "localhost") {
+            url = url.includes(":") ? `http://${url}` : `http://${url}:8000`;
+        } else {
+            url = `https://${url}`;
+        }
     }
     return url.replace(/\/$/, "");
 }
@@ -67,6 +79,9 @@ async function search(query, repoUrl) {
                     content: query
                 }
             ]
+        },
+        {
+            timeout: 60000
         }
     );
 
