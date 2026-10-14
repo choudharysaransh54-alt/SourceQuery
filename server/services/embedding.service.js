@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const BATCH_SIZE = 40;
+const BATCH_SIZE = 15;
 
 function getEmbeddingServiceUrl() {
     let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "https://sourcequery-embedding.onrender.com";
