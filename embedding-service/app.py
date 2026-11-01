@@ -2,9 +2,17 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 
+import torch
+torch.set_num_threads(1)
+
 app = FastAPI()
 
 model = SentenceTransformer("BAAI/bge-small-en-v1.5", device="cpu")
+
+
+@app.get("/")
+def health():
+    return {"status": "ok", "service": "embedding-service"}
 
 
 class Request(BaseModel):
