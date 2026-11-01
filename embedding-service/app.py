@@ -17,9 +17,11 @@ def embed(request: Request):
     texts = [chunk["content"] for chunk in request.chunks]
 
     embeddings = model.encode(
-        texts,
-        normalize_embeddings=True
-    ).tolist()
+    texts,
+    batch_size=8,
+    normalize_embeddings=True,
+    show_progress_bar=False
+).tolist()
 
     return {
         "embeddings": embeddings
