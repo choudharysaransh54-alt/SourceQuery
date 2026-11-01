@@ -77,7 +77,12 @@ async function chunkRepository(files) {
                 );
             }
 
-            const text = content.slice(start, end);
+            let text = content.slice(start, end);
+
+            // Avoid slicing in the middle of UTF-16 surrogate pairs (e.g., emojis)
+            if (/[\uD800-\uDBFF]$/.test(text)) {
+                text = text.slice(0, -1);
+            }
 
             if (text.trim().length > 0) {
 

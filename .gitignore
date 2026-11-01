@@ -44,3 +44,4 @@ embedding-service/venv/
 # Misc
 *.tmp
 *.cache
+sourcequery_overview.txt

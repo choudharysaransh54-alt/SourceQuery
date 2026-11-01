@@ -15,13 +15,13 @@ ${chunk.payload.content}
         .join("\n\n========================\n\n");
 
     const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: "qwen/qwen3.8-27b",
         temperature: 0.1,
         messages: [
             {
                 role: "system",
                 content: `
-You are RepoLens AI, an expert software engineer.
+You are SourceQuery, an expert software engineer.
 
 Rules:
 - Answer ONLY from the repository context.

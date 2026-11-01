@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 
 import torch
-torch.set_num_threads(1)
+torch.set_num_threads(4)
 
 app = FastAPI()
 
@@ -22,14 +22,23 @@ class Request(BaseModel):
 @app.post("/embed")
 def embed(request: Request):
 
-    texts = [chunk["content"] for chunk in request.chunks]
+    texts = []
+    for chunk in request.chunks:
+        val = chunk.get("content") if isinstance(chunk, dict) else str(chunk)
+        if val is None or not isinstance(val, str):
+            val = str(val or " ")
+        # Strip lone surrogates (caused by slicing UTF-16 strings across emojis)
+        val = val.encode("utf-8", "ignore").decode("utf-8", "ignore")
+        if not val.strip():
+            val = " "
+        texts.append(val)
 
     embeddings = model.encode(
-    texts,
-    batch_size=16,
-    normalize_embeddings=True,
-    show_progress_bar=False
-).tolist()
+        texts,
+        batch_size=16,
+        normalize_embeddings=True,
+        show_progress_bar=False
+    ).tolist()
 
     return {
         "embeddings": embeddings
@@ -39,8 +48,7 @@ import uvicorn
 
 if __name__ == "__main__":
     uvicorn.run(
-        "app:app",
+        app,
         host="0.0.0.0",
-        port=8000,
-        reload=True
+        port=8000
     )

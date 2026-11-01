@@ -7,7 +7,7 @@ function Navbar() {
         <nav className="flex justify-between items-center py-6">
 
             <h2 className="text-2xl font-bold text-blue-500">
-                RepoLens AI
+                SourceQuery
             </h2>
 
             <a

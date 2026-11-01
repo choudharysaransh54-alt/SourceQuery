@@ -1,6 +1,6 @@
 <div align="center">
 
-# RepoLens AI
+# SourceQuery
 
 ### AI-Powered Semantic Code Search Engine using RAG
 
@@ -97,7 +97,7 @@ Ask questions about any GitHub repository in natural language and receive contex
 # Project Structure
 
 ```text
-RepoLens-AI
+SourceQuery
 
 client/
     src/
