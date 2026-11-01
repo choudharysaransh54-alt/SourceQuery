@@ -1,8 +1,17 @@
 const Groq = require("groq-sdk");
 
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
+let groqClient = null;
+
+function getGroqClient() {
+    if (!groqClient) {
+        const apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            throw new Error("GROQ_API_KEY is not set. Please configure GROQ_API_KEY in your environment variables.");
+        }
+        groqClient = new Groq({ apiKey });
+    }
+    return groqClient;
+}
 
 async function askGemini(question, chunks) {
 
@@ -14,6 +23,7 @@ ${chunk.payload.content}
         `)
         .join("\n\n========================\n\n");
 
+    const groq = getGroqClient();
     const completion = await groq.chat.completions.create({
         model: "qwen/qwen3.8-27b",
         temperature: 0.1,

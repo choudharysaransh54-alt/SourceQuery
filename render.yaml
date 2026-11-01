@@ -20,8 +20,6 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      - key: PORT
-        value: 5000
       - key: GROQ_API_KEY
         sync: false
       - key: QDRANT_URL
@@ -29,12 +27,6 @@ services:
       - key: QDRANT_API_KEY
         sync: false
       - key: EMBEDDING_SERVICE
-        fromService:
-          type: web
-          name: sourcequery-embedding
-          property: host
+        value: https://sourcequery-embedding.onrender.com
       - key: EMBEDDING_SERVICE_URL
-        fromService:
-          type: web
-          name: sourcequery-embedding
-          property: host
+        value: https://sourcequery-embedding.onrender.com

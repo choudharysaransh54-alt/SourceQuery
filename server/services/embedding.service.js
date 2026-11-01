@@ -2,9 +2,19 @@ const axios = require("axios");
 
 const BATCH_SIZE = 40;
 
+function getEmbeddingServiceUrl() {
+    let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "http://localhost:8000";
+    url = url.trim();
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = `https://${url}`;
+    }
+    return url.replace(/\/$/, "");
+}
+
 async function generateEmbeddings(chunks) {
 
     const embeddings = [];
+    const baseUrl = getEmbeddingServiceUrl();
 
     for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
 
@@ -15,7 +25,7 @@ async function generateEmbeddings(chunks) {
         );
 
         const response = await axios.post(
-            `${process.env.EMBEDDING_SERVICE_URL}/embed`,
+            `${baseUrl}/embed`,
             {
                 chunks: batch
             }
