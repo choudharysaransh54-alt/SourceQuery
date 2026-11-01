@@ -5,7 +5,16 @@ from fastembed import TextEmbedding
 
 app = FastAPI()
 
-model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5", threads=1)
+
+
+@app.on_event("startup")
+def startup_event():
+    # Pre-warm model in memory so first request is instant
+    try:
+        list(model.embed(["warmup"], batch_size=16))
+    except Exception as e:
+        print("Warmup error:", e)
 
 
 @app.get("/")
@@ -31,7 +40,7 @@ def embed(request: Request):
             val = " "
         texts.append(val)
 
-    embeddings = [embedding.tolist() for embedding in model.embed(texts)]
+    embeddings = [embedding.tolist() for embedding in model.embed(texts, batch_size=16)]
 
     return {
         "embeddings": embeddings
