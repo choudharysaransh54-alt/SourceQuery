@@ -1,13 +1,11 @@
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
-
-import torch
-torch.set_num_threads(4)
+from fastembed import TextEmbedding
 
 app = FastAPI()
 
-model = SentenceTransformer("BAAI/bge-small-en-v1.5", device="cpu")
+model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
 
 @app.get("/")
@@ -33,12 +31,7 @@ def embed(request: Request):
             val = " "
         texts.append(val)
 
-    embeddings = model.encode(
-        texts,
-        batch_size=16,
-        normalize_embeddings=True,
-        show_progress_bar=False
-    ).tolist()
+    embeddings = [embedding.tolist() for embedding in model.embed(texts)]
 
     return {
         "embeddings": embeddings
