@@ -81,6 +81,7 @@ function ChatBox({ repoUrl }) {
                     rows={3}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    disabled={loading}
                     onKeyDown={(e) => {
 
                         if (e.key === "Enter" && !e.shiftKey) {
@@ -93,17 +94,15 @@ function ChatBox({ repoUrl }) {
 
                     }}
                     placeholder="Ask anything about this repository..."
-                    className="mb-20 flex-1 bg-[#111827] border border-gray-800 rounded-xl p-5 outline-none resize-none"
+                    className="disabled:opacity-50 mb-20 flex-1 bg-[#111827] border border-gray-800 rounded-xl p-5 outline-none resize-none"
                 />
 
-                <button onClick={askAI}
-                    className="mb-20 bg-blue-600 hover:bg-blue-700 px-8 rounded-xl font-semibold whitespace-nowrap"
+                <button
+                    onClick={askAI}
+                    disabled={loading}
+                    className="mb-20 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-8 rounded-xl font-semibold whitespace-nowrap"
                 >
-                    {
-                        loading
-                            ? "Thinking..."
-                            : "Ask AI"
-                    }
+                    {loading ? "Thinking..." : "Ask AI"}
                 </button>
 
             </div>
