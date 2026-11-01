@@ -126,7 +126,14 @@ exports.deleteRepository = async (req, res) => {
 
         console.log("Deleting collection:", collectionName);
 
-        await deleteCollection(collectionName);
+        try {
+            await deleteCollection(collectionName);
+        } catch (err) {
+            console.warn("Could not delete from Qdrant:", err.message);
+        }
+
+        const { deleteLocalPoints } = require("../services/qdrant.service");
+        await deleteLocalPoints(collectionName);
 
         await deleteSavedRepository(repoName);
 

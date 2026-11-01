@@ -15,7 +15,8 @@ function getGroqClient() {
 
 async function askGemini(question, chunks) {
 
-    const context = chunks
+    const trimmedChunks = chunks.slice(0, 5);
+    let context = trimmedChunks
         .map((chunk, index) => `
 File: ${chunk.payload.relativePath}
 
@@ -23,14 +24,23 @@ ${chunk.payload.content}
         `)
         .join("\n\n========================\n\n");
 
+    if (context.length > 8000) {
+        context = context.slice(0, 8000) + "\n\n...[Context truncated for brevity]...";
+    }
+
     const groq = getGroqClient();
-    const completion = await groq.chat.completions.create({
-        model: "qwen/qwen3.8-27b",
-        temperature: 0.1,
-        messages: [
-            {
-                role: "system",
-                content: `
+    const models = ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"];
+    let lastError = null;
+
+    for (const model of models) {
+        try {
+            const completion = await groq.chat.completions.create({
+                model,
+                temperature: 0.1,
+                messages: [
+                    {
+                        role: "system",
+                        content: `
 You are SourceQuery, an expert software engineer.
 
 Rules:
@@ -42,11 +52,11 @@ Rules:
 - Keep answers concise but complete.
 - Use markdown.
 - Use code blocks whenever helpful.
-                `
-            },
-            {
-                role: "user",
-                content: `
+                        `
+                    },
+                    {
+                        role: "user",
+                        content: `
 Repository Context
 
 The following code snippets are ordered by semantic relevance.
@@ -63,12 +73,19 @@ Instructions:
 - If the answer spans multiple files, combine them.
 - Mention the file names used.
 - If the answer is not present, explicitly say so.
-                `
-            }
-        ]
-    });
+                        `
+                    }
+                ]
+            });
 
-    return completion.choices[0].message.content.trim();
+            return completion.choices[0].message.content.trim();
+        } catch (err) {
+            console.warn(`Model ${model} failed (${err.message}). Trying fallback model...`);
+            lastError = err;
+        }
+    }
+
+    throw lastError;
 
 }
 

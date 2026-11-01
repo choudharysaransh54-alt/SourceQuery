@@ -87,11 +87,24 @@ async function search(query, repoUrl) {
 
     const embedding = data.embeddings[0];
 
-    let results = await client.search(collectionName, {
-        vector: embedding,
-        limit: SEARCH_LIMIT,
-        with_payload: true
-    });
+    let results = [];
+    try {
+        results = await client.search(collectionName, {
+            vector: embedding,
+            limit: SEARCH_LIMIT,
+            with_payload: true
+        });
+    } catch (err) {
+        console.warn(`Qdrant search notice: ${err.message}. Using built-in vector search.`);
+        const { getLocalPoints } = require("./qdrant.service");
+        const { cosineSimilarity } = require("../utils/vectorMath.util");
+        const localPoints = await getLocalPoints(collectionName);
+        results = localPoints.map(p => ({
+            id: p.id,
+            score: cosineSimilarity(embedding, p.vector),
+            payload: p.payload
+        }));
+    }
 
     results = results
         .map(item => ({

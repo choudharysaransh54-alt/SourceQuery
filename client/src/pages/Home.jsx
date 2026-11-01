@@ -114,7 +114,7 @@ function Home() {
                 <RepositorySelector
                     repositories={repositories}
                     selectedRepo={selectedRepo}
-                    onSelect={setSelectedRepo}
+                    onSelect={handleRepoSelect}
                     onRefresh={loadRepositories}
                     onIndexed={handleIndexed}
                 />
