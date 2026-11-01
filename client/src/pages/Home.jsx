@@ -14,7 +14,7 @@ function Home() {
     const [repositories, setRepositories] = useState([]);
     const [selectedRepo, setSelectedRepo] = useState("");
 
-    async function loadRepositories() {
+    async function loadRepositories(preferredRepo) {
 
         try {
 
@@ -27,19 +27,24 @@ function Home() {
                 setSelectedRepo("");
                 setRepoUrl("");
                 setIsIndexed(false);
+                localStorage.removeItem("selectedRepo");
 
                 return;
             }
 
+            const target = preferredRepo || selectedRepo || localStorage.getItem("selectedRepo");
+
             const exists = data.repositories.find(
-                r => r.name === selectedRepo
+                r => r.name === target
             );
 
-            const repo = exists || data.repositories[0];
+            // Default to the target repo if it exists, otherwise the newest repo (last in list)
+            const repo = exists || data.repositories[data.repositories.length - 1];
 
             setSelectedRepo(repo.name);
             setRepoUrl(repo.name);
             setIsIndexed(true);
+            localStorage.setItem("selectedRepo", repo.name);
 
         } catch (error) {
 
@@ -53,7 +58,7 @@ function Home() {
         loadRepositories();
     }, []);
 
-    function handleIndexed(message = "Repository indexed successfully") {
+    function handleIndexed(message = "Repository indexed successfully", newlyIndexedRepo) {
 
         setIsIndexed(true);
 
@@ -63,7 +68,13 @@ function Home() {
             setSuccessMessage("");
         }, 3000);
 
-        loadRepositories();
+        if (newlyIndexedRepo) {
+            setSelectedRepo(newlyIndexedRepo);
+            setRepoUrl(newlyIndexedRepo);
+            localStorage.setItem("selectedRepo", newlyIndexedRepo);
+        }
+
+        loadRepositories(newlyIndexedRepo);
 
     }
 
@@ -71,6 +82,7 @@ function Home() {
 
         setSelectedRepo(repo);
         setRepoUrl(repo);
+        localStorage.setItem("selectedRepo", repo);
 
     }
 

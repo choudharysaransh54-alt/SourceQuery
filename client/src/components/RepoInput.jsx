@@ -24,9 +24,14 @@ function RepoInput({ onIndexed, successMessage, onRepoChange }) {
                 }
             );
 
+            const repoName = repoUrl
+                .split("/")
+                .pop()
+                .replace(".git", "");
+
             onRepoChange(repoUrl);
 
-            onIndexed("Repository indexed successfully");
+            onIndexed("Repository indexed successfully", repoName);
 
 
         } catch (error) {
