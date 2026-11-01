@@ -67,6 +67,13 @@ function ChatBox({ repoUrl }) {
 
     }
 
+    function clearChat() {
+
+        setMessages([]);
+        setQuery("");
+
+    }
+
     return (
 
         <div className="max-w-5xl mx-auto m-12">
@@ -97,13 +104,40 @@ function ChatBox({ repoUrl }) {
                     className="disabled:opacity-50 mb-20 flex-1 bg-[#111827] border border-gray-800 rounded-xl p-5 outline-none resize-none"
                 />
 
-                <button
-                    onClick={askAI}
-                    disabled={loading}
-                    className="mb-20 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-8 rounded-xl font-semibold whitespace-nowrap"
-                >
-                    {loading ? "Thinking..." : "Ask AI"}
-                </button>
+                {
+                    messages.length === 0 ? (
+
+                        <button
+                            onClick={askAI}
+                            disabled={loading}
+                            className="mb-20 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-8 rounded-xl font-semibold whitespace-nowrap"
+                        >
+                            {loading ? "Thinking..." : "Ask AI"}
+                        </button>
+
+                    ) : (
+
+                        <div className="flex flex-col gap-3">
+
+                            <button
+                                onClick={askAI}
+                                disabled={loading}
+                                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-8 py-4 rounded-xl font-semibold whitespace-nowrap"
+                            >
+                                {loading ? "Thinking..." : "Ask AI"}
+                            </button>
+
+                            <button
+                                onClick={clearChat}
+                                className="bg-gray-700 hover:bg-gray-600 px-8 py-4 rounded-xl font-semibold whitespace-nowrap"
+                            >
+                                Clear Chat
+                            </button>
+
+                        </div>
+
+                    )
+                }
 
             </div>
 
