@@ -1,6 +1,18 @@
 const axios = require("axios");
 
-const BATCH_SIZE = 15;
+const BATCH_SIZE = 8;
+
+async function postWithRetry(url, data, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await axios.post(url, data, { timeout: 120000 });
+        } catch (err) {
+            console.warn(`Embedding attempt ${attempt}/${retries} failed: ${err.message}`);
+            if (attempt === retries) throw err;
+            await new Promise(r => setTimeout(r, attempt * 1500));
+        }
+    }
+}
 
 function getEmbeddingServiceUrl() {
     let url = process.env.EMBEDDING_SERVICE_URL || process.env.EMBEDDING_SERVICE || "https://sourcequery-embedding.onrender.com";
@@ -37,17 +49,16 @@ async function generateEmbeddings(chunks) {
             `Embedding batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(chunks.length / BATCH_SIZE)}`
         );
 
-        const response = await axios.post(
+        const response = await postWithRetry(
             `${baseUrl}/embed`,
             {
                 chunks: batch
-            },
-            {
-                timeout: 120000
             }
         );
 
         embeddings.push(...response.data.embeddings);
+        // Small delay between batches to avoid cloud burst rate limiting
+        await new Promise(r => setTimeout(r, 400));
     }
 
     return embeddings;
