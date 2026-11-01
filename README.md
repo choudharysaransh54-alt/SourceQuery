@@ -53,7 +53,7 @@ Ask questions about any GitHub repository in natural language and receive contex
 | Frontend | Backend | AI | Database | Deployment |
 |-----------|----------|---------|-------------|---------------|
 | React | Node.js | Groq Llama 3.3 70B | Qdrant | Vercel |
-| Tailwind CSS | Express.js | Sentence Transformers | Railway |
+| Tailwind CSS | Express.js | Sentence Transformers | | Railway |
 | Axios | REST API | BAAI/bge-small-en-v1.5 | | |
 
 ---
@@ -236,10 +236,6 @@ EMBEDDING_SERVICE=
 GROQ_API_KEY=
 ```
 
-Embedding Service
-
----
-
 # Future Improvements
 
 - Authentication
@@ -258,10 +254,6 @@ Embedding Service
 GitHub
 
 https://github.com/gandhigarvit01
-
-LinkedIn
-
-(Add LinkedIn URL)
 
 ---
 
