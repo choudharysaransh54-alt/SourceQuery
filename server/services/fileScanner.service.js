@@ -26,13 +26,14 @@ const SUPPORTED_EXTENSIONS = [
 const DEFAULT_IGNORES = [
     "node_modules",
     ".git",
-    ".github",      // ADD THIS
+    ".github",
     "dist",
     "build",
     ".next",
     "coverage",
     ".idea",
-    ".vscode"
+    ".vscode",
+    "temp"
 ];
 
 async function scanRepository(repoPath) {

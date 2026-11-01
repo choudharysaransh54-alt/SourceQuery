@@ -16,6 +16,37 @@ const {
 } = require("../services/repository.service");
 const { getCollectionName } = require("../utils/collection.util");
 
+function selectBalancedChunks(chunks, maxChunks = 80) {
+    if (chunks.length <= maxChunks) return chunks;
+
+    const fileMap = new Map();
+    for (const chunk of chunks) {
+        if (!fileMap.has(chunk.relativePath)) {
+            fileMap.set(chunk.relativePath, []);
+        }
+        fileMap.get(chunk.relativePath).push(chunk);
+    }
+
+    const selected = [];
+    const files = Array.from(fileMap.values());
+    let round = 0;
+
+    while (selected.length < maxChunks) {
+        let addedInRound = false;
+        for (const fileChunks of files) {
+            if (round < fileChunks.length) {
+                selected.push(fileChunks[round]);
+                addedInRound = true;
+                if (selected.length >= maxChunks) break;
+            }
+        }
+        if (!addedInRound) break;
+        round++;
+    }
+
+    return selected;
+}
+
 exports.uploadRepository = async (req, res) => {
 
     try {
@@ -42,9 +73,8 @@ exports.uploadRepository = async (req, res) => {
             });
         }
 
-        // Limit chunks for fast, reliable indexing within cloud timeout limits
-        const MAX_CHUNKS = 35;
-        const indexChunks = chunks.slice(0, MAX_CHUNKS);
+        // Balance chunks evenly across files so every file (frontend and backend) is indexed
+        const indexChunks = selectBalancedChunks(chunks, 80);
 
         const embeddings = await generateEmbeddings(indexChunks);
 
@@ -196,8 +226,7 @@ exports.reindexRepository = async (req, res) => {
             });
         }
 
-        const MAX_CHUNKS = 35;
-        const indexChunks = chunks.slice(0, MAX_CHUNKS);
+        const indexChunks = selectBalancedChunks(chunks, 80);
 
         const embeddings = await generateEmbeddings(indexChunks);
 
