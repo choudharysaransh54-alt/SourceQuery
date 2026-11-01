@@ -20,7 +20,6 @@ const SUPPORTED_EXTENSIONS = [
     ".rb",
     ".swift",
     ".kt",
-    ".json",
     ".md"
 ];
 
@@ -70,7 +69,13 @@ async function scanRepository(repoPath) {
                         "REVIEWING.md",
                         "SECURITY.md",
                         "LICENSE",
-                        "CHANGELOG.md"
+                        "CHANGELOG.md",
+                        "package.json",
+                        "package-lock.json",
+                        "yarn.lock",
+                        "pnpm-lock.yaml",
+                        "tsconfig.json",
+                        "jsconfig.json"
                     ];
 
                     if (ignoredFiles.includes(entry))

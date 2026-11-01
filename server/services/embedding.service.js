@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const BATCH_SIZE = 20;
+const BATCH_SIZE = 40;
 
 async function generateEmbeddings(chunks) {
 

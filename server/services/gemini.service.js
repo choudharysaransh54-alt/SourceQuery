@@ -7,7 +7,6 @@ const groq = new Groq({
 async function askGemini(question, chunks) {
 
     const context = chunks
-        .slice(0, 5)
         .map((chunk, index) => `
 File: ${chunk.payload.relativePath}
 
@@ -40,11 +39,20 @@ Rules:
                 content: `
 Repository Context
 
+The following code snippets are ordered by semantic relevance.
+The first snippet is the most relevant to the user's question.
+
 ${context}
 
 Question
 
 ${question}
+
+Instructions:
+- Prefer the highest-ranked snippets.
+- If the answer spans multiple files, combine them.
+- Mention the file names used.
+- If the answer is not present, explicitly say so.
                 `
             }
         ]

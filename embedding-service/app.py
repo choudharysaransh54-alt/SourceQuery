@@ -18,7 +18,7 @@ def embed(request: Request):
 
     embeddings = model.encode(
     texts,
-    batch_size=8,
+    batch_size=16,
     normalize_embeddings=True,
     show_progress_bar=False
 ).tolist()

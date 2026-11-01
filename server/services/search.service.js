@@ -3,8 +3,29 @@ const { client } = require("../config/qdrant");
 const { getCollectionName } = require("../utils/collection.util");
 
 const SCORE_THRESHOLD = 0.65;
-const MAX_RESULTS = 5;
+const MAX_RESULTS = 8;
 const SEARCH_LIMIT = 20;
+
+const ignoredFiles = [
+    "package-lock.json",
+    "package.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    ".gitignore",
+    "license"
+];
+
+if (ignoredFiles.includes(file)) {
+    return -999;
+}
+
+if (
+    path.includes("node_modules") ||
+    path.includes("/dist/") ||
+    path.includes("/build/")
+) {
+    return -999;
+}
 
 function boostScore(item) {
 
@@ -61,7 +82,7 @@ async function search(query, repoUrl) {
 
     for (const item of results) {
 
-        if (item.score < SCORE_THRESHOLD)
+        if (item.boostedScore < SCORE_THRESHOLD)
             continue;
 
         const key = item.payload.relativePath;
