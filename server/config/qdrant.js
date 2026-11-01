@@ -37,6 +37,8 @@ async function listCollections() {
 
 async function deleteCollection(collectionName) {
 
+    console.log("Deleting from Qdrant:", collectionName);
+    
     await client.deleteCollection(collectionName);
 
 }

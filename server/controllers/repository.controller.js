@@ -14,6 +14,7 @@ const {
     getRepository,
     deleteRepository: deleteSavedRepository
 } = require("../services/repository.service");
+const { getCollectionName } = require("../utils/collection.util");
 
 exports.uploadRepository = async (req, res) => {
 
@@ -101,7 +102,20 @@ exports.deleteRepository = async (req, res) => {
 
         const { repoName } = req.params;
 
-        await deleteCollection(`repolens-${repoName}`);
+        const repository = await getRepository(repoName);
+
+        if (!repository) {
+            return res.status(404).json({
+                success: false,
+                message: "Repository not found"
+            });
+        }
+
+        const collectionName = getCollectionName(repository.repoUrl);
+
+        console.log("Deleting collection:", collectionName);
+
+        await deleteCollection(collectionName);
 
         await deleteSavedRepository(repoName);
 
@@ -120,6 +134,8 @@ exports.deleteRepository = async (req, res) => {
         });
 
     } catch (error) {
+
+        console.error(error);
 
         res.status(500).json({
             success: false,
