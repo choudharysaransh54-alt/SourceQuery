@@ -1,3 +1,4 @@
+import { useState } from "react";
 import api from "../services/api";
 
 function RepositorySelector({
@@ -7,6 +8,8 @@ function RepositorySelector({
     onRefresh,
     onIndexed
 }) {
+
+    const [reindexing, setReindexing] = useState(false);
 
     async function handleDelete() {
 
@@ -41,6 +44,8 @@ function RepositorySelector({
 
         try {
 
+            setReindexing(true);
+
             await api.post(
                 `/repositories/${selectedRepo}/reindex`
             );
@@ -51,9 +56,14 @@ function RepositorySelector({
 
         } catch (error) {
 
-            console.log(error);
+            alert(
+                error.response?.data?.message ||
+                "Failed to re-index repository."
+            );
 
-            alert(error.message);
+        } finally {
+
+            setReindexing(false);
 
         }
 
@@ -90,9 +100,10 @@ function RepositorySelector({
 
                     <button
                         onClick={handleReindex}
-                        className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl font-semibold"
+                        disabled={reindexing}
+                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-5 py-3 rounded-xl font-semibold"
                     >
-                        Re-index
+                        {reindexing ? "Re-indexing..." : "Re-index"}
                     </button>
 
                     <button
