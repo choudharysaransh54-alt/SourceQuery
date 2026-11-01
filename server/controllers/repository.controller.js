@@ -63,11 +63,11 @@ exports.uploadRepository = async (req, res) => {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Upload error:", error.response?.data || error.message || error);
 
         res.status(500).json({
             success: false,
-            message: error.message
+            message: error.response?.data?.message || error.message
         });
 
     }
