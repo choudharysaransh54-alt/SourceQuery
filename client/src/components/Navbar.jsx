@@ -11,9 +11,10 @@ function Navbar() {
             </h2>
 
             <a
-                href="https://github.com"
+                href="https://github.com/choudharysaransh54-alt/SourceQuery"
                 target="_blank"
-                className="flex items-center gap-2 text-gray-300 hover:text-white"
+                rel="noreferrer"
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition"
             >
                 <GitBranch size={20} />
                 GitHub
