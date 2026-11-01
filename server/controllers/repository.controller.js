@@ -35,10 +35,21 @@ exports.uploadRepository = async (req, res) => {
 
         const chunks = await chunkRepository(files);
 
-        const embeddings = await generateEmbeddings(chunks);
+        if (!files.length || !chunks.length) {
+            return res.status(400).json({
+                success: false,
+                message: "No supported code files (.js, .ts, .py, etc.) found in this repository."
+            });
+        }
+
+        // Limit chunks for fast, reliable indexing within cloud timeout limits
+        const MAX_CHUNKS = 150;
+        const indexChunks = chunks.slice(0, MAX_CHUNKS);
+
+        const embeddings = await generateEmbeddings(indexChunks);
 
         const stored = await storeEmbeddings(
-            chunks,
+            indexChunks,
             embeddings,
             repoUrl
         );
@@ -171,10 +182,20 @@ exports.reindexRepository = async (req, res) => {
 
         const chunks = await chunkRepository(files);
 
-        const embeddings = await generateEmbeddings(chunks);
+        if (!files.length || !chunks.length) {
+            return res.status(400).json({
+                success: false,
+                message: "No supported code files found in this repository."
+            });
+        }
+
+        const MAX_CHUNKS = 150;
+        const indexChunks = chunks.slice(0, MAX_CHUNKS);
+
+        const embeddings = await generateEmbeddings(indexChunks);
 
         const stored = await storeEmbeddings(
-            chunks,
+            indexChunks,
             embeddings,
             repoUrl
         );
